@@ -1,0 +1,16 @@
+body {
+    background: #F5F5F5;
+}
+
+div.main {
+    width: 80%;
+    margin: auto;
+    background: #FFF;
+    border-radius: 5px;
+    font-family: Helvetica, sans-serif;
+}
+
+div.main h1 {
+    text-align: center;
+    padding: 10px;
+}
