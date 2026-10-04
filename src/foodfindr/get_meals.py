@@ -1,5 +1,5 @@
 from itertools import takewhile
-from .meal import Meal
+from meal import Meal
 import requests
 
 # API
@@ -22,7 +22,7 @@ def get_meals_by_ingredients(ingredients):
         data = response.json()
         meals = data.get("meals")
         if meals:
-            for meal in meals:
+            for meal in meals[:8]:
                 meal_data = requests.get(f"https://www.themealdb.com/api/json/v1/1/lookup.php?i={meal['idMeal']}")
                 meal_data.raise_for_status()
                 meal_ingredients = meal_data.json().get("meals")[0]
