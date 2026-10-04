@@ -37,6 +37,20 @@
 					onclick="document.getElementById('recipe-{{ meal.id }}').showModal()"
 					onkeydown="if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); document.getElementById('recipe-{{ meal.id }}').showModal(); }">
 					<h3>{{ meal.name }}</h3>
+					{% set available_count = meal.ingredients.intersection(provided_ingredients) | length %}
+					<div class="recipe-availability">
+						<div class="recipe-availability-label">
+							<span>Ingredients you have</span>
+							<strong>{{ available_count }} / {{ meal.ingredients | length }}</strong>
+						</div>
+						<meter
+							id="availability-{{ meal.id }}"
+							min="0"
+							max="{{ meal.ingredients | length }}"
+							value="{{ available_count }}"
+							aria-label="{{ available_count }} of {{ meal.ingredients | length }} ingredients available">
+						</meter>
+					</div>
 					<ul>
 						{% for ingredient in meal.ingredients | sort %}
 						<li>

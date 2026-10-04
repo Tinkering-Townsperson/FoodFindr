@@ -234,6 +234,28 @@ form p {
     font-size: 1.35rem;
 }
 
+.recipe-availability {
+    margin-bottom: 18px;
+}
+
+.recipe-availability-label {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 6px;
+    color: #6c706d;
+    font-size: 0.9rem;
+}
+
+.recipe-availability-label strong {
+    color: #24313a;
+}
+
+.recipe-availability meter {
+    width: 100%;
+    height: 10px;
+}
+
 .recipe-card ul,
 dialog ul {
     margin: 0;

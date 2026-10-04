@@ -16,6 +16,7 @@ app.config["SECRET_KEY"] = os.getenv("FLASK_SECRET_KEY", "development-only-chang
 def index():
     ingredients = []
     meals = []
+    provided_ingredients = set()
 
     if request.method == 'POST':
         ingredients = [
@@ -38,6 +39,7 @@ def index():
         title='Home',
         ingredients=ingredients,
         meals=meals,
+        provided_ingredients=provided_ingredients,
     )
 
 
@@ -53,7 +55,7 @@ def chat():
         [
             {
                 "role": "assistant",
-                "content": "Hi! I'm FoodFindr's recipe assistant. Type ingredients separated by commas or choose a quick start.",
+                "content": "Hi! I'm FoodFindr's recipe assistant. Type ingredients separated by commas or choose a quick start.",  # noqa
             }
         ],
     )

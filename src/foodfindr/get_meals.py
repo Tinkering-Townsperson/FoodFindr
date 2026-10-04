@@ -1,5 +1,5 @@
 from itertools import takewhile
-from meal import Meal
+from foodfindr.meal import Meal
 import requests
 
 # API
