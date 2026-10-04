@@ -3,6 +3,7 @@
 <head>
 	<meta charset="UTF-8">
 	<title>{% block title %}{{ title }}{% endblock %} - FoodFindr</title>
+	<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
 	<header>
@@ -20,19 +21,21 @@
 		{% if meals %}
 		<section aria-label="Recipes">
 			<h2>Recipes</h2>
-			<div>
+			<div class="recipe-grid">
 				{% for meal in meals %}
-				<article>
+				<article
+					class="recipe-card"
+					tabindex="0"
+					role="button"
+					aria-label="View recipe for {{ meal.name }}"
+					onclick="document.getElementById('recipe-{{ meal.id }}').showModal()"
+					onkeydown="if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); document.getElementById('recipe-{{ meal.id }}').showModal(); }">
 					<h3>{{ meal.name }}</h3>
-					<h4>Ingredients</h4>
 					<ul>
 						{% for ingredient in meal.ingredients | sort %}
 						<li>{{ ingredient }}</li>
 						{% endfor %}
 					</ul>
-					<button type="button" onclick="document.getElementById('recipe-{{ meal.id }}').showModal()">
-						View recipe
-					</button>
 				</article>
 
 				<dialog id="recipe-{{ meal.id }}">
