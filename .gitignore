@@ -97,11 +97,6 @@ Temporary Items
 # Windows shortcuts
 *.lnk
 
-##################################
-# PROJECT-SPECIFIC WORKING FILES #
-##################################
+# Jetbrains project files
 
-f.h
-newbadge.bmp
-img.png
-img_resized.png
+.idea
