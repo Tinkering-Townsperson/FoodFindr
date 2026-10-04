@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>{{ title }} - FoodFindr</title>
+	<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+	<header>
+		<div class="header-row">
+			<h1>Ingredient Cart</h1>
+			<a class="cart-link" href="{{ url_for('index') }}">Back to recipes</a>
+		</div>
+	</header>
+
+	<main>
+		<section aria-labelledby="cart-heading">
+			<h2 id="cart-heading">Ingredients to buy</h2>
+			<ul id="cart-items" class="cart-items"></ul>
+			<p id="empty-cart">Your cart is empty.</p>
+			<button id="clear-cart" type="button">Clear cart</button>
+		</section>
+	</main>
+
+	<script>
+		const cartKey = 'foodfindr-ingredients';
+		const cartItems = document.getElementById('cart-items');
+		const emptyCart = document.getElementById('empty-cart');
+		const clearCart = document.getElementById('clear-cart');
+
+		function renderCart() {
+			const ingredients = JSON.parse(localStorage.getItem(cartKey) || '[]');
+			cartItems.replaceChildren();
+			emptyCart.hidden = ingredients.length > 0;
+			clearCart.hidden = ingredients.length === 0;
+
+			ingredients.forEach((ingredient) => {
+				const item = document.createElement('li');
+				const remove = document.createElement('button');
+				item.append(ingredient, ' ', remove);
+				remove.type = 'button';
+				remove.textContent = 'Remove';
+				remove.addEventListener('click', () => {
+					const updatedIngredients = JSON.parse(localStorage.getItem(cartKey) || '[]')
+						.filter((item) => item !== ingredient);
+					localStorage.setItem(cartKey, JSON.stringify(updatedIngredients));
+					renderCart();
+				});
+				cartItems.append(item);
+			});
+		}
+
+		clearCart.addEventListener('click', () => {
+			localStorage.removeItem(cartKey);
+			renderCart();
+		});
+
+		renderCart();
+	</script>
+</body>
+</html>

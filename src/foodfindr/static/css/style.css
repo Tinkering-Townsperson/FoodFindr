@@ -23,6 +23,13 @@ header {
     padding: 48px 0 28px;
 }
 
+.header-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+}
+
 h1,
 h2,
 h3,
@@ -36,6 +43,118 @@ h1 {
     color: #bf4f35;
     font-size: clamp(2.6rem, 8vw, 5rem);
     line-height: 0.95;
+}
+
+.cart-link {
+    color: #bf4f35;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+.cart-link:hover,
+.cart-link:focus-visible {
+    text-decoration: underline;
+}
+
+.chat-panel {
+    max-width: 800px;
+    padding-bottom: 48px;
+}
+
+.quick-starts {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 24px;
+}
+
+.quick-starts form,
+.clear-form,
+.chat-form {
+    display: block;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: transparent;
+}
+
+.quick-starts button,
+.clear-form button {
+    padding: 8px 12px;
+    font-size: 0.9rem;
+}
+
+.chat-messages {
+    display: grid;
+    gap: 14px;
+    margin-bottom: 24px;
+}
+
+.chat-message {
+    max-width: 85%;
+    padding: 16px 18px;
+    border-radius: 12px;
+    background: #fffdf8;
+    border: 1px solid #ded6c8;
+}
+
+.chat-message.user {
+    justify-self: end;
+    background: #f0d9ce;
+}
+
+.chat-message p {
+    margin: 6px 0 0;
+    white-space: pre-wrap;
+}
+
+.chat-form {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 10px;
+    align-items: end;
+    padding: 24px;
+    border: 1px solid #ded6c8;
+    border-radius: 12px;
+    background: #fffdf8;
+}
+
+.chat-form label {
+    grid-column: 1 / -1;
+}
+
+.chat-form textarea {
+    width: 100%;
+    resize: vertical;
+    padding: 12px 14px;
+    border: 1px solid #bdb3a4;
+    border-radius: 6px;
+    font: inherit;
+}
+
+.clear-form {
+    margin-top: 12px;
+}
+
+.error {
+    padding: 12px 14px;
+    border: 1px solid #b94735;
+    border-radius: 6px;
+    color: #8b2417;
+    background: #fbe9e5;
+}
+
+#cart-count {
+    display: inline-grid;
+    min-width: 1.6em;
+    min-height: 1.6em;
+    margin-left: 4px;
+    padding: 2px 5px;
+    place-items: center;
+    border-radius: 50%;
+    color: #fffdf8;
+    background: #bf4f35;
+    font-size: 0.8rem;
 }
 
 form {
@@ -121,6 +240,52 @@ dialog ul {
     padding-left: 20px;
 }
 
+.ingredient-link {
+    display: inline;
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+    color: #bf4f35;
+    background: transparent;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+}
+
+.ingredient-link:hover,
+.ingredient-link:focus-visible,
+.ingredient-link.in-cart {
+    color: #24313a;
+}
+
+.ingredient-link.in-cart::after {
+    content: ' +';
+    color: #bf4f35;
+    font-weight: bold;
+}
+
+.cart-items {
+    max-width: 600px;
+    margin: 0 0 24px;
+    padding: 24px 24px 24px 44px;
+    border: 1px solid #ded6c8;
+    border-radius: 12px;
+    background: #fffdf8;
+}
+
+.cart-items li + li {
+    margin-top: 12px;
+}
+
+.cart-items button {
+    padding: 4px 8px;
+    font-size: 0.85rem;
+}
+
+#empty-cart[hidden],
+#clear-cart[hidden] {
+    display: none;
+}
+
 dialog {
     width: min(600px, calc(100% - 32px));
     max-height: calc(100% - 32px);
@@ -162,6 +327,10 @@ dialog form {
     }
 
     form {
+        grid-template-columns: 1fr;
+    }
+
+    .chat-form {
         grid-template-columns: 1fr;
     }
 }

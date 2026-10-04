@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>{{ title }} - FoodFindr</title>
+	<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+	<header>
+		<div class="header-row">
+			<h1>FoodFindr Chat</h1>
+			<a class="cart-link" href="{{ url_for('index') }}">Recipes</a>
+		</div>
+	</header>
+
+	<main>
+		{% with errors = get_flashed_messages(category_filter=["error"]) %}
+			{% for error in errors %}
+			<p class="error" role="alert">{{ error }}</p>
+			{% endfor %}
+		{% endwith %}
+
+		<section class="chat-panel" aria-label="Recipe assistant">
+			<div class="quick-starts">
+				{% for label, item in premade_prompts.items() %}
+				<form method="post">
+					<input type="hidden" name="prompt" value="{{ item.prompt }}">
+					{% if item.category %}
+					<input type="hidden" name="category" value="{{ item.category }}">
+					{% endif %}
+					<button type="submit">{{ label }}</button>
+				</form>
+				{% endfor %}
+			</div>
+
+			<div class="chat-messages">
+				{% for message in messages %}
+				<article class="chat-message {{ message.role }}">
+					<strong>{{ "FoodFindr" if message.role == "assistant" else "You" }}</strong>
+					<p>{{ message.content }}</p>
+				</article>
+				{% endfor %}
+			</div>
+
+			<form method="post" class="chat-form">
+				<label for="prompt">Ask FoodFindr</label>
+				<textarea id="prompt" name="prompt" rows="3" required
+					placeholder="Type your ingredients, e.g. chicken, garlic, rice"></textarea>
+				<button type="submit">Send</button>
+			</form>
+
+			<form method="post" class="clear-form">
+				<input type="hidden" name="action" value="clear">
+				<button type="submit">Clear chat history</button>
+			</form>
+		</section>
+	</main>
+</body>
+</html>

@@ -7,7 +7,13 @@
 </head>
 <body>
 	<header>
-		<h1>FoodFindr</h1>
+		<div class="header-row">
+			<h1>FoodFindr</h1>
+			<a class="cart-link" href="{{ url_for('cart') }}">
+				Cart <span id="cart-count">0</span>
+			</a>
+			<a class="cart-link" href="{{ url_for('chat') }}">Chat</a>
+		</div>
 	</header>
 
 	<main>
@@ -33,7 +39,15 @@
 					<h3>{{ meal.name }}</h3>
 					<ul>
 						{% for ingredient in meal.ingredients | sort %}
-						<li>{{ ingredient }}</li>
+						<li>
+							<button
+								class="ingredient-link"
+								type="button"
+								data-ingredient="{{ ingredient }}"
+								aria-label="Add {{ ingredient }} to cart">
+								{{ ingredient }}
+							</button>
+						</li>
 						{% endfor %}
 					</ul>
 				</article>
@@ -61,5 +75,37 @@
 		<p>No meals found for those ingredients.</p>
 		{% endif %}
 	</main>
+	<script>
+		const cartKey = 'foodfindr-ingredients';
+		const getCart = () => JSON.parse(localStorage.getItem(cartKey) || '[]');
+
+		function updateCartCount() {
+			document.getElementById('cart-count').textContent = getCart().length;
+		}
+
+		document.querySelectorAll('.ingredient-link').forEach((link) => {
+			link.addEventListener('click', (event) => {
+				event.stopPropagation();
+				const ingredient = link.dataset.ingredient;
+				const cart = getCart();
+				const index = cart.indexOf(ingredient);
+
+				if (index === -1) {
+					cart.push(ingredient);
+				} else {
+					cart.splice(index, 1);
+				}
+
+				localStorage.setItem(cartKey, JSON.stringify(cart));
+				link.classList.toggle('in-cart', index === -1);
+				link.setAttribute('aria-label', `${index === -1 ? 'Remove' : 'Add'} ${ingredient} ${index === -1 ? 'from' : 'to'} cart`);
+				updateCartCount();
+			});
+
+			link.classList.toggle('in-cart', getCart().includes(link.dataset.ingredient));
+		});
+
+		updateCartCount();
+	</script>
 </body>
 </html>
