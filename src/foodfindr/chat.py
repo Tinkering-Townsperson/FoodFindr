@@ -5,6 +5,7 @@ import re
 from collections.abc import Iterator
 from pathlib import Path
 
+
 import requests
 import sseclient
 
@@ -255,3 +256,55 @@ def snowflake_settings() -> dict[str, str]:
             )
         )
     return values
+
+def simplify_recipe(meal, user_ingredients: set[str], connection=None) -> str:
+    """Return a model-generated simplified Meal JSON for the user's available ingredients."""
+    available = ", ".join(sorted(user_ingredients)) if user_ingredients else "No ingredients provided"
+    original_ingredients = ", ".join(sorted(meal.ingredients))
+
+    prompt = f"""
+Return only valid JSON for one Meal object using this exact structure:
+{{
+  "id": {meal.id},
+  "name": "Recipe name",
+  "ingredients": ["ingredient 1", "ingredient 2"],
+  "recipe": "Cook the chicken in a skillet until golden, then add the rice and sauce and simmer until everything is heated through."
+}}
+
+Rules:
+- Use the Meal structure exactly as defined in the app: id, name, ingredients, recipe.
+- Keep the same meal id as the original recipe: {meal.id}.
+- `name` should be a concise recipe name.
+- `ingredients` must be a JSON array of ingredient strings only.
+- `recipe` must be a single plain-text string with the full cooking instructions in natural prose.
+- Do NOT use numbered steps like "Step 1" or "Step 2".
+- Do NOT include extra keys, comments, markdown fences, or explanations outside the JSON.
+- Only include ingredients that are actually needed and available, or sensible substitutes from the user's current ingredients.
+- Keep the recipe faithful to the original dish while simplifying it to match what the user has.
+- If an ingredient is unavailable, replace it with a reasonable substitute from the user's ingredients.
+- If no valid substitute exists, omit that ingredient and adjust the recipe accordingly.
+
+Original recipe:
+Name: {meal.name}
+Ingredients: {original_ingredients}
+Instructions: {meal.recipe}
+
+User's current ingredients:
+{available}
+"""
+
+    if connection is None:
+        raise ValueError("A Snowflake connection is required to simplify the recipe.")
+
+    messages = [
+        {
+            "role": "system",
+            "content": (
+                "You are a careful recipe simplifier. Respond with only valid JSON for a Meal object. "
+                "Do not include markdown fences, explanations, or extra keys. "
+                "Use the exact shape: {id, name, ingredients, recipe}."
+            ),
+        },
+        {"role": "user", "content": prompt},
+    ]
+    return "".join(stream_model(messages, connection)).strip()
