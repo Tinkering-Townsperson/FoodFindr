@@ -6,8 +6,60 @@
 	<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
-	<div class="main">
+	<header>
 		<h1>FoodFindr</h1>
-	</div>
+	</header>
+
+	<main>
+		<form method="post">
+			<label for="ingredients">Ingredients</label>
+			<input id="ingredients" name="ingredients" type="text" value="{{ ingredients | join(', ') }}" required>
+			<button type="submit">Find meals</button>
+			<p>Enter ingredients separated by commas.</p>
+		</form>
+
+		{% if meals %}
+		<section aria-label="Recipes">
+			<h2>Recipes</h2>
+			<div class="recipe-grid">
+				{% for meal in meals %}
+				<article
+					class="recipe-card"
+					tabindex="0"
+					role="button"
+					aria-label="View recipe for {{ meal.name }}"
+					onclick="document.getElementById('recipe-{{ meal.id }}').showModal()"
+					onkeydown="if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); document.getElementById('recipe-{{ meal.id }}').showModal(); }">
+					<h3>{{ meal.name }}</h3>
+					<ul>
+						{% for ingredient in meal.ingredients | sort %}
+						<li>{{ ingredient }}</li>
+						{% endfor %}
+					</ul>
+				</article>
+
+				<dialog id="recipe-{{ meal.id }}">
+					<h3>{{ meal.name }}</h3>
+					<h4>Recipe</h4>
+					{% if meal.recipe %}
+					<ul>
+						{% for instruction in meal.recipe.replace('\r\n', '\n').replace('\r', '\n').split('\n') if instruction.strip() %}
+						<li>{{ instruction.strip() }}</li>
+						{% endfor %}
+					</ul>
+					{% else %}
+					<p>No recipe instructions available.</p>
+					{% endif %}
+					<form method="dialog">
+						<button type="submit">Close</button>
+					</form>
+				</dialog>
+				{% endfor %}
+			</div>
+		</section>
+		{% elif request.method == 'POST' %}
+		<p>No meals found for those ingredients.</p>
+		{% endif %}
+	</main>
 </body>
 </html>
