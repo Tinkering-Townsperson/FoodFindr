@@ -64,6 +64,15 @@
 						</li>
 						{% endfor %}
 					</ul>
+					{% if available_count < meal.ingredients | length %}
+					{% set modification_prompt = "Modify the " ~ meal.name ~ " recipe so it only uses the ingredients I have. I have: " ~ (provided_ingredients | sort | join(', ')) ~ ". Original ingredients: " ~ (meal.ingredients | sort | join(', ')) ~ ". Original instructions: " ~ meal.recipe ~ ". Keep the dish recognizable, explain any substitutions or omissions, and let me continue refining it." %}
+					<a
+						class="modify-link"
+						href="{{ url_for('chat', prompt=modification_prompt) }}"
+						onclick="event.stopPropagation()">
+						Modify recipe in chat
+					</a>
+					{% endif %}
 				</article>
 
 				<dialog id="recipe-{{ meal.id }}">

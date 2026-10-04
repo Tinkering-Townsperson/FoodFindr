@@ -4,12 +4,29 @@ import requests
 import snowflake.connector
 from flask import Flask, flash, redirect, render_template, request, session, url_for
 
-from foodfindr.chat import PREMADE_PROMPTS, api_call, filter_stream, snowflake_settings
+from foodfindr.chat import (
+    PREMADE_PROMPTS,
+    api_call,
+    filter_stream,
+    snowflake_settings,
+)
 from foodfindr.get_meals import get_meals_by_ingredients
 
 
 app = Flask(__name__)
 app.config["SECRET_KEY"] = os.getenv("FLASK_SECRET_KEY", "development-only-change-me")
+
+
+def load_meals(ingredients):
+    full_meals, partial_meals = get_meals_by_ingredients(ingredients)
+    meals_by_id = {meal.id: meal for meal in full_meals + partial_meals}
+    provided_ingredients = set(ingredients)
+    meals = sorted(
+        meals_by_id.values(),
+        key=lambda meal: len(meal.ingredients & provided_ingredients),
+        reverse=True,
+    )
+    return meals, provided_ingredients
 
 
 @app.route('/', methods=['GET', 'POST'])
@@ -25,14 +42,7 @@ def index():
             if ingredient.strip()
         ]
 
-        full_meals, partial_meals = get_meals_by_ingredients(ingredients)
-        meals_by_id = {meal.id: meal for meal in full_meals + partial_meals}
-        provided_ingredients = set(ingredients)
-        meals = sorted(
-            meals_by_id.values(),
-            key=lambda meal: len(meal.ingredients & provided_ingredients),
-            reverse=True,
-        )
+        meals, provided_ingredients = load_meals(ingredients)
 
     return render_template(
         'index.html',
@@ -50,6 +60,7 @@ def cart():
 
 @app.route('/chat', methods=['GET', 'POST'])
 def chat():
+    initial_prompt = request.args.get("prompt", "").strip()
     messages = session.setdefault(
         "chat_messages",
         [
@@ -92,6 +103,7 @@ def chat():
         title="Chat",
         messages=messages,
         premade_prompts=PREMADE_PROMPTS,
+        initial_prompt=initial_prompt,
     )
 
 

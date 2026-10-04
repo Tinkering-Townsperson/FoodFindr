@@ -262,6 +262,22 @@ dialog ul {
     padding-left: 20px;
 }
 
+.modify-link {
+    display: inline-block;
+    margin: 18px 0 0;
+    padding: 8px 12px;
+    border-radius: 6px;
+    color: #fffdf8;
+    background: #bf4f35;
+    font-size: 0.9rem;
+    text-decoration: none;
+}
+
+.modify-link:hover,
+.modify-link:focus-visible {
+    background: #963c28;
+}
+
 .ingredient-link {
     display: inline;
     padding: 0;
